@@ -1,15 +1,14 @@
+import os
 import datetime
 import asyncio
 from ilog import ILog
 
 
 class LogComponent(ILog):
-    
     def __init__(self):
         self.current_log_file = None
         self.is_running = True
         self.queue = asyncio.Queue()
-        self.loop = asyncio.get_event_loop()
 
     async def write(self, message: str) -> None:
         if self.current_log_file is None or self._crossed_midnight():
@@ -46,22 +45,10 @@ class LogComponent(ILog):
             log_file.write(f"Log file created at {now}\n")
 
     async def _process_queue(self) -> None:
-        while self.is_running:
+        while self.is_running or not self.queue.empty():
             message = await self.queue.get()
             try:
                 with open(self.current_log_file, 'a') as log_file:
                     log_file.write(message + '\n')
             finally:
                 self.queue.task_done()
-
-
-# Example usage
-async def main():
-    log_component = LogComponent()
-    await log_component.write("Log message 1")
-    await log_component.write("Log message 2")
-    await log_component.stop(immediate=False)
-    await log_component.wait_for_completion()
-
-
-asyncio.run(main())
