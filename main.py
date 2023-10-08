@@ -1,5 +1,5 @@
 import asyncio
-from log_component import LogComponent
+from async_logger.log_component import LogComponent
 
 
 async def main():
@@ -15,7 +15,4 @@ if __name__ == "__main__":
     log_component.write("Log message 2")
 
     asyncio.run(main())
-    # log_component.stop(immediate=False)
-    # log_component.wait_for_completion()
-    # loop.run_until_complete(log_component.stop(immediate=True))  # Stop processing the queue immediately
-    # loop.close()
+   

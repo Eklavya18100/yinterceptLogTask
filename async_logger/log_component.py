@@ -1,7 +1,7 @@
 import os
 import datetime
 import asyncio
-from ilog import ILog
+from async_logger.ilog import ILog
 
 
 class LogComponent(ILog):
@@ -11,6 +11,7 @@ class LogComponent(ILog):
         self.queue = asyncio.Queue()
         now = datetime.datetime.now()
         self.last_date = now.strftime('%Y_%m_%d')
+        os.makedirs('logs',exist_ok=True)
         self.last_filename = f"logs/{now.strftime('%Y_%m_%d_%H_%M_%S')}.txt"
 
 
@@ -40,7 +41,9 @@ class LogComponent(ILog):
         print('processing')
         while self.is_running or not self.queue.empty():
             message = await self.queue.get()
-            print(message)
+
+            # await self.handle(message)
+            
 
             now = datetime.datetime.now()
             date_prefix = now.strftime('%Y_%m_%d')
